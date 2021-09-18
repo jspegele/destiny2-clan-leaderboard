@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
 
-function App() {
+import Clan from './components/Clan'
+
+const App = () => {
+  // test fetch
+  // fetch("https://www.bungie.net/Platform/User/Search/Prefix/TheMachoMan/0/", {
+  //     headers: {
+  //       'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+  //     }
+  //   })
+  //   .then(res => res.json())
+  //   .then(
+  //     (result) => {
+  //       console.log('test fetch', result)
+  //     },
+  //     (error) => {
+  //       console.log('test fetch error', error)
+  //     }
+  //   )
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Destiny Clan Leaderboard</h1>
+      <Clan />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
