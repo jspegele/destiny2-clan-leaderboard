@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import styles from './styles/member.module.scss'
 
-const Member = ({ member }) => {
+const MemberRow = ({ member }) => {
   const apiRoot = 'https://www.bungie.net/Platform'
   const [pvpStats, setPvpStats]  = useState(null)
   const [pveStats, setPveStats]  = useState(null)
@@ -41,22 +41,24 @@ const Member = ({ member }) => {
           member.bungieNetUserInfo.displayName
         )}
       </div>
-      {pvpStats.hasOwnProperty('activitiesEntered') && (
-        <>
-        <div>{pvpStats.activitiesEntered.basic.value}</div>
-        <div>{pvpStats.activitiesWon.basic.value}</div>
-        <div>
-          {Math.round(parseInt(pvpStats.activitiesWon.basic.value) / parseInt(pvpStats.activitiesEntered.basic.value) * 100) / 100}
-        </div>
-        <div>{pvpStats.kills.basic.value}</div>
-        <div>{pvpStats.assists.basic.value}</div>
-        <div>{pvpStats.deaths.basic.value}</div>
-        <div>{Math.round(pvpStats.killsDeathsRatio.basic.value * 100) / 100}</div>
-        <div>{Math.round(pvpStats.efficiency.basic.value * 100) / 100}</div>
-        </>
+      {pvpStats && (
+        pvpStats.hasOwnProperty('activitiesEntered') && (
+          <>
+          <div>{pvpStats.activitiesEntered.basic.value}</div>
+          <div>{pvpStats.activitiesWon.basic.value}</div>
+          <div>
+            {Math.round(parseInt(pvpStats.activitiesWon.basic.value) / parseInt(pvpStats.activitiesEntered.basic.value) * 100) / 100}
+          </div>
+          <div>{pvpStats.kills.basic.value}</div>
+          <div>{pvpStats.assists.basic.value}</div>
+          <div>{pvpStats.deaths.basic.value}</div>
+          <div>{Math.round(pvpStats.killsDeathsRatio.basic.value * 100) / 100}</div>
+          <div>{Math.round(pvpStats.efficiency.basic.value * 100) / 100}</div>
+          </>
+        )
       )}
     </div>
   )
 }
  
-export default Member
+export default MemberRow
