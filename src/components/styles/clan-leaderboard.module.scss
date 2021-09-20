@@ -1,0 +1,13 @@
+.clanStats > div {
+  border-bottom: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: 250px repeat(8, 1fr);
+  width: 100%;
+  
+  & > div {
+    align-items: center;
+    display: flex;
+    padding: 5px;
+    overflow: hidden;
+  }
+}
