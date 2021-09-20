@@ -8,6 +8,9 @@ import { setMembers } from "../store/actions/members"
 
 import styles from './styles/leaderboard-page.module.scss'
 
+import Container from '../components/Container'
+import ClanDetails from '../components/ClanDetails'
+
 const LeaderboardPage = ({ match, clan, members, setClan, setMembers }) => {
   const [error, setError] = useState(null)
 
@@ -64,19 +67,13 @@ const LeaderboardPage = ({ match, clan, members, setClan, setMembers }) => {
   }, [match.params, clan.groupId, clanId, setClan, setMembers])
 
   return (
-    <div>
-      <h1>Clan Leaderboard</h1>
+    <Container>
       {error && (
         <p>{error}</p>
       )}
       {clan.groupId && (
         <>
-          <div className="clanDetails">
-            <h2>{clan.name} [{clan.clanCallsign}] Leaderboard</h2>
-            <h3>"{clan.motto}"</h3>
-            <p>{clan.about}</p>
-            <p>{clan.memberCount} Members</p>
-          </div>
+          <ClanDetails clan={clan} />
           {members.length && (
             <div className={styles.clanStats}>
               <div className={styles.header}>
@@ -97,7 +94,7 @@ const LeaderboardPage = ({ match, clan, members, setClan, setMembers }) => {
           )}
         </>
       )}
-    </div>
+    </Container>
   )
 }
 

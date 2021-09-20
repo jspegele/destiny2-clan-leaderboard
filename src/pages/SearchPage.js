@@ -20,7 +20,7 @@ const SearchPage = () => {
   
   return (
     <div>
-      <h1>Clan Search</h1>
+      <h2>Clan Search</h2>
       <ClanSearch />
     </div>
   )

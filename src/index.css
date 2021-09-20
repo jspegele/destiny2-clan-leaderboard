@@ -1,5 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
+:root{
+  --text-primary: #fff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-disabled: rgba(255, 255, 255, 0.5);
+
+  --action-active: #fff;
+  --action-hover: rgba(255, 255, 255, 0.08);
+  --action-selected: rgba(255, 255, 255, 0.16);
+  --action-disabled: rgba(255, 255, 255, 0.3);
+  --action-disabledBackground: rgba(255, 255, 255, 0.12);
+
+  --background-default: #121212;
+  --background-paper: #121212;
+
+  --divider: rgba(255, 255, 255, 0.12);
+
+  --primary-light: #42a5f5;
+  --primary-main: #1976d2;
+  --primary-dark: #1565c0;
+
+  --secondary-light: #ba68c8;
+  --secondary-main: #9c27b0;
+  --secondary-dark: #7b1fa2;
+
+  --error-light: #ef5350;
+  --error-main: #d32f2f;
+  --error-dark: #c62828;
+
+  --warning-light: #ff9800;
+  --warning-main: #ED6C02;
+  --warning-dark: #e65100;
+
+  --info-light: #03a9f4;
+  --info-main: #0288d1;
+  --info-dark: #01579b;
+
+  --success-light: #4caf50;
+  --success-main: #2e7d32;
+  --success-dark: #1b5e20;
+}
+
 html {
   box-sizing: border-box;
   font-size: 62.5%;
@@ -17,8 +58,8 @@ body, h1, h2, h3, h4, h5, h6, p, ol, ul {
 }
 
 body {
-  background: #121212;
-  color: #fff;
+  background: var(--background-default);
+  color: var(--text-primary);
   font-family: 'Roboto', Helvetica, sans-serif;
   font-size: 1.6rem;
 }
