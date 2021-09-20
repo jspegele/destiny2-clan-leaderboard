@@ -34,11 +34,20 @@ const MemberRow = ({ member }) => {
   return (
     <div className={styles.member} key={member.destinyUserInfo.membershipId}>
       <div className={styles.name}>
-        <img src={`https://www.bungie.net/${member.bungieNetUserInfo.iconPath}`} alt="" />
-        {member.bungieNetUserInfo.bungieGlobalDisplayName ? (
-          `${member.bungieNetUserInfo.bungieGlobalDisplayName}#${member.bungieNetUserInfo.bungieGlobalDisplayNameCode}`
+        {member.bungieNetUserInfo ? (
+          <>
+            <img src={`https://www.bungie.net/${member.bungieNetUserInfo.iconPath}`} alt="" />
+            {member.bungieNetUserInfo.bungieGlobalDisplayName ? (
+              `${member.bungieNetUserInfo.bungieGlobalDisplayName}#${member.bungieNetUserInfo.bungieGlobalDisplayNameCode}`
+            ) : (
+              member.bungieNetUserInfo.displayName
+            )}
+          </>
         ) : (
-          member.bungieNetUserInfo.displayName
+          <>
+            <img src={`https://www.bungie.net/${member.destinyUserInfo.iconPath}`} alt="" />
+            {member.destinyUserInfo.displayName}
+          </>
         )}
       </div>
       {pvpStats && (

@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-import { history } from "../routers/AppRouter"
+import database from '../firebase/firebase'
+import { history } from '../routers/AppRouter'
+
+import styles from './styles/clan-search.module.scss'
 
 const ClanSearch = () => {
   const apiRoot = 'https://www.bungie.net/Platform'
@@ -22,7 +25,13 @@ const ClanSearch = () => {
         }
       })
       .then(response => {
-        history.push(`/leaderboard/${response.data.Response.results[0].groupId}`)
+        const clan = response.data.Response.results[0]
+        database
+          .ref(`tracked_clans/${clan.groupId}`)
+          .set(clan.name)
+          .then(() => {
+            history.push(`/leaderboard/${clan.groupId}`)
+          })
       })
       .catch(error => {
         console.log('Clan search error', error)
@@ -31,9 +40,10 @@ const ClanSearch = () => {
   }
 
   return (
-    <div className="clanLookup">
-      <form onSubmit={handleClanLookup}>
-        <label htmlFor="clan-search">Search Clans:</label>{' '}
+    <div className={styles.wrapper}>
+      <h2>Clan Lookup</h2>
+      <form className={styles.form} onSubmit={handleClanLookup}>
+        <label htmlFor="clan-search" className="visuallyhidden">Search Clans:</label>{' '}
         <input
           type="text"
           placeholder="Exact clan name"

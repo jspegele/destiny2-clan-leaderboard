@@ -1,0 +1,93 @@
+{
+  "rules": {
+    "items": {
+      ".read": true,
+      ".write": "auth != null",
+      "$item_id": {
+        "category": {
+          ".validate": "newData.isString() && newData.val().length < 64"
+        },
+        "link": {
+          ".validate": "newData.isString() && newData.val().length < 128"
+        },
+        "mastery": {
+          ".validate": "newData.isNumber() && (newData.val() === 3000 || newData.val() === 4000 || newData.val() === 6000)"
+        },
+        "mr": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 15"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length < 64"
+        },
+        "prime": {
+          ".validate": "newData.isBoolean()"
+        },
+        "slot": {
+          ".validate": "newData.isString() && newData.val().length < 64"
+        },
+        "source": {
+          ".validate": "newData.isString() && newData.val().length < 64"
+        },
+        "type": {
+          ".validate": "newData.isString() && newData.val().length < 64"
+        },
+        "vaulted": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "checklists": {
+      ".read": true,
+      ".write": true,
+      "$list_id": {
+        "intrinsics": {
+          "engineering": {
+          	".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+          },
+          "piloting": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+          },
+          "tactical": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+          },
+          "gunnery": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "mastered": {
+          "$key": {
+            ".validate": "$key.matches(/^[0-9]+$/) && newData.isString()"
+          }
+        },
+        "owned": {
+          "$key": {
+            ".validate": "$key.matches(/^[0-9]+$/) && newData.isString()"
+          }
+        },
+        "starChartMastery": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 50000"
+        },
+        "preferences": {
+          "hideMastered": {
+            ".validate": "newData.isBoolean()"
+          },
+          "hideOwned": {
+            ".validate": "newData.isBoolean()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

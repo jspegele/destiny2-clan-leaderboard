@@ -2,14 +2,15 @@ import React from 'react'
 
 import Container from '../components/Container'
 import ClanSearch from '../components/ClanSearch'
+import TopClans from '../components/TopClans'
 
-const SearchPage = () => {  
+const HomePage = () => {  
   return (
     <Container>
-      <h2>Clan Search</h2>
       <ClanSearch />
+      <TopClans />
     </Container>
   )
 }
  
-export default SearchPage
+export default HomePage

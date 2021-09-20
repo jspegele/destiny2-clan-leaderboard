@@ -63,3 +63,24 @@ body {
   font-family: 'Roboto', Helvetica, sans-serif;
   font-size: 1.6rem;
 }
+
+a {
+  color: var(--info-light);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--info-main);
+}
+
+/* Accessibility */
+.visuallyhidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
