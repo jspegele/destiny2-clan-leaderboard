@@ -1,34 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React  from 'react'
+import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import database from '../firebase/firebase'
 import styles from './styles/top-clans.module.scss'
 
-const TopClans = () => {
-  const [topClans, setTopClans] = useState([])
-
-  useEffect(() => {
-    database.ref(`tracked_clans`).once('value').then(snap => {
-      const topClansArray = []
-      for (const [key, value] of Object.entries(snap.val())) {
-        topClansArray.push({
-          id: key,
-          name: value
-        })
-      }
-      setTopClans(topClansArray)
-    })
-  }, [])
-
+const TopClans = ({ trackedClans }) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.topClans}>
         <h3>Tracked Clans</h3>
-        {topClans.length && (
+        {trackedClans.length && (
           <ul>
-            {topClans.map(clan => (
-              <li key={clan.id}>
-                <Link to={`leaderboard/${clan.id}`}>
+            {trackedClans.map(clan => (
+              <li key={clan.groupId}>
+                <Link to={`leaderboard/${clan.groupId}`}>
                   {clan.name}
                 </Link>
               </li>
@@ -40,5 +25,9 @@ const TopClans = () => {
   )
 
 }
+
+const mapStateToProps = state => ({
+  trackedClans: state.trackedClans
+})
  
-export default TopClans
+export default connect(mapStateToProps)(TopClans)

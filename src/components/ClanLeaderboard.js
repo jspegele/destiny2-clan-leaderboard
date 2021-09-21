@@ -3,14 +3,15 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 
 import { setClan } from "../store/actions/clan"
-import { setMembers } from "../store/actions/members"
+import { setMembers, setPvpStats } from "../store/actions/members"
+import { setClanStats } from "../store/actions/trackedClans"
 
 import styles from './styles/clan-leaderboard.module.scss'
 
 import ClanDetails from './ClanDetails'
 import MemberRow from './MemberRow'
 
-const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers }) => {
+const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers, setPvpStats, setClanStats }) => {
   const [error, setError] = useState(null)
   const apiRoot = 'https://www.bungie.net/Platform'
 
@@ -61,6 +62,67 @@ const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers }) => {
     }
   }, [clan.groupId, clanId, setClan, setMembers])
 
+  // useEffect(() => {
+  //   if (members.length) {
+  //     // Clan Total stats
+  //     let totalActivities = 0,
+  //         totalWins = 0,
+  //         totalKills = 0,
+  //         totalAssists = 0,
+  //         totalDeaths = 0
+
+  //     members.forEach(member => {
+  //       // Get Member Stats from Bungie
+  //       const apiEnpoint = `/Destiny2/${member.destinyUserInfo.membershipType}/Account/${member.destinyUserInfo.membershipId}/Stats/`
+  //       axios.get(`${apiRoot}${apiEnpoint}`, {
+  //           headers: {
+  //             'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+  //           }
+  //         })
+  //         .then(response => {
+  //           // Handle PVP Values
+  //           const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
+  //           // add stats to member object in store
+  //           setPvpStats(member.destinyUserInfo.membershipId, {
+  //             ...pvpAllTime
+  //           })
+
+  //           // Add member stats to totals
+  //           totalActivities += pvpAllTime.activitiesEntered.basic.value
+  //           totalWins += pvpAllTime.activitiesWon.basic.value
+  //           totalKills += pvpAllTime.kills.basic.value
+  //           totalAssists += pvpAllTime.assists.basic.value
+  //           totalDeaths += pvpAllTime.deaths.basic.value
+
+  //           // setPveStats({
+  //           //   ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
+  //           // })
+  //         })
+  //         .catch(error => {
+  //           console.log('Clan members error', error.response)
+  //         })
+  //     })
+
+  //     setClanStats({
+  //       totalActivities,
+  //       totalWins,
+  //       totalKills,
+  //       totalAssists,
+  //       totalDeaths
+  //     })
+
+  //     // calculate clan total stats
+  //     // let totalActiviites = 0,
+  //     //     totalWins = 0,
+  //     //     totalKills = 0,
+  //     //     totalAssists = 0,
+  //     //     totalDeaths = 0
+  //     // for (let i = 0; i < members.length; i++) {
+  
+  //     // }
+  //   }
+  // }, [members.length])
+
   return (
     <div>
       {error && (
@@ -83,7 +145,10 @@ const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers }) => {
                 <div>Efficiency</div>
               </div>
               {members.map((member, i) => (
-                <MemberRow key={member.destinyUserInfo.membershipId} member={member} />
+                <MemberRow
+                  key={member.destinyUserInfo.membershipId}
+                  membershipId={member.destinyUserInfo.membershipId}
+                />
               ))}
             </div>
           )}
@@ -100,7 +165,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setClan,
-  setMembers
+  setMembers,
+  setPvpStats,
+  setClanStats
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ClanLeaderboard)

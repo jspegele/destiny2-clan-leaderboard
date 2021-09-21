@@ -28,7 +28,7 @@ const ClanSearch = () => {
         const clan = response.data.Response.results[0]
         database
           .ref(`tracked_clans/${clan.groupId}`)
-          .set(clan.name)
+          .set(clan)
           .then(() => {
             history.push(`/leaderboard/${clan.groupId}`)
           })
