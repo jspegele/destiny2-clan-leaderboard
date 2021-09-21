@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
@@ -62,10 +62,11 @@ const ClanLeaderboard = ({
         })
         .then(response => {
           const results = response.data.Response.results
+          console.log(results)
           const membersArray = []
           results.forEach(item => {
             membersArray.push({
-              displayName: item.destinyUserInfo.bungieGlobalDisplayName || item.bungieNetUserInfo.displayName || item.destinyUserInfo.displayName,
+              displayName: item.destinyUserInfo.bungieGlobalDisplayName || (item.bungieNetUserInfo ? item.bungieNetUserInfo.displayName : item.destinyUserInfo.displayName),
               displayNameCode: item.destinyUserInfo.bungieGlobalDisplayNameCode || "",
               membershipId: item.destinyUserInfo.membershipId,
               membershipType: item.destinyUserInfo.membershipType,
@@ -82,7 +83,7 @@ const ClanLeaderboard = ({
           setMembers(membersArray)
         })
         .catch(error => {
-          console.log('Clan members errorx', error.response)
+          console.log('Clan members errorx', error)
           setError('Error retreiving clan roster')
         })
 
@@ -177,71 +178,8 @@ const ClanLeaderboard = ({
   }, [members.length, clan.memberCount, setPvpStats, setPveStats])
 
   useEffect(() => {
-    if (clanTotalStats.counted === clan.memberCount) {
-      startSetClanStat(groupId, clanTotalStats.stats)
-    }
-  }, [clanTotalStats.counted, clan.memberCount, startSetClanStat, groupId, clanTotalStats.stats])
-
-  // useEffect(() => {
-  //   if (members.length) {
-  //     // Clan Total stats
-  //     let totalActivities = 0,
-  //         totalWins = 0,
-  //         totalKills = 0,
-  //         totalAssists = 0,
-  //         totalDeaths = 0
-
-  //     members.forEach(member => {
-  //       // Get Member Stats from Bungie
-  //       const apiEnpoint = `/Destiny2/${member.destinyUserInfo.membershipType}/Account/${member.destinyUserInfo.membershipId}/Stats/`
-  //       axios.get(`${apiRoot}${apiEnpoint}`, {
-  //           headers: {
-  //             'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-  //           }
-  //         })
-  //         .then(response => {
-  //           // Handle PVP Values
-  //           const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
-  //           // add stats to member object in store
-  //           setPvpStats(member.destinyUserInfo.membershipId, {
-  //             ...pvpAllTime
-  //           })
-
-  //           // Add member stats to totals
-  //           totalActivities += pvpAllTime.activitiesEntered.basic.value
-  //           totalWins += pvpAllTime.activitiesWon.basic.value
-  //           totalKills += pvpAllTime.kills.basic.value
-  //           totalAssists += pvpAllTime.assists.basic.value
-  //           totalDeaths += pvpAllTime.deaths.basic.value
-
-  //           // setPveStats({
-  //           //   ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
-  //           // })
-  //         })
-  //         .catch(error => {
-  //           console.log('Clan members error', error.response)
-  //         })
-  //     })
-
-  //     setClanStats({
-  //       totalActivities,
-  //       totalWins,
-  //       totalKills,
-  //       totalAssists,
-  //       totalDeaths
-  //     })
-
-  //     // calculate clan total stats
-  //     // let totalActiviites = 0,
-  //     //     totalWins = 0,
-  //     //     totalKills = 0,
-  //     //     totalAssists = 0,
-  //     //     totalDeaths = 0
-  //     // for (let i = 0; i < members.length; i++) {
-  
-  //     // }
-  //   }
-  // }, [members.length])
+    startSetClanStat(groupId, clanTotalStats.stats)
+  }, [clanTotalStats.counted, startSetClanStat, groupId, clanTotalStats.stats])
 
   return (
     <div>
@@ -274,9 +212,6 @@ const ClanLeaderboard = ({
           )}
         </>
       )}
-      <p>Counted: {clanTotalStats.counted}</p>
-      <p>Total Activities: {clanTotalStats.stats.totalActivities}</p>
-      <p>Total Kills: {clanTotalStats.stats.totalKills}</p>
     </div>
   )
 }
