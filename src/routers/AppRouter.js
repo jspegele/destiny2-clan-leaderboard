@@ -14,7 +14,7 @@ const AppRouter = () => (
     <Header />
     <Switch>
       <Route path="/" component={HomePage} exact={true} />
-      <Route path="/leaderboard/:clanId" component={LeaderboardPage}  />
+      <Route path="/leaderboard/:groupId" component={LeaderboardPage}  />
       <Route path="/leaderboard" component={LeaderboardPage}  />
     </Switch>
     <Footer />

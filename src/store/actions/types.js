@@ -8,4 +8,4 @@ export const SET_PVE_STATS = 'SET_PVE_STATS'
 
 // Tracked clan types
 export const SET_TRACKED_CLANS = 'SET_TRACKED_CLANS'
-export const SET_CLAN_STATS = 'SET_CLAN_STATS'
+export const SET_CLAN_STAT = 'SET_CLAN_STAT'

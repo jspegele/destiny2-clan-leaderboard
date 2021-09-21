@@ -6,13 +6,13 @@ import Container from '../components/Container'
 import ClanLeaderboard from '../components/ClanLeaderboard'
 
 const LeaderboardPage = ({ match }) => {
-  const clanId = match.params.clanId
+  const groupId = match.params.groupId
   
-  if (!clanId) history.push('/')
+  if (!groupId) history.push('/')
 
   return (
     <Container>
-      {clanId && <ClanLeaderboard clanId={clanId} />}
+      {groupId && <ClanLeaderboard groupId={groupId} />}
     </Container>
   )
 }

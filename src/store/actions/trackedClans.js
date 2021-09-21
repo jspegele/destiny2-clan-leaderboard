@@ -1,3 +1,5 @@
+import database from '../../firebase/firebase'
+
 import * as actionTypes from './types'
 
 export const setTrackedClans = trackedClans => ({
@@ -7,10 +9,23 @@ export const setTrackedClans = trackedClans => ({
   }
 })
 
-export const setClanStats = (groupId, stats) => ({
-  type: actionTypes.SET_CLAN_STATS,
+export const setClanStat = (groupId, statsObj) => ({
+  type: actionTypes.SET_CLAN_STAT,
   payload: {
     groupId,
-    stats
+    statsObj
   }
 })
+
+export const startSetClanStat = (groupId, statsObj) => {
+  return (dispatch) => {
+    return database
+      .ref(`tracked_clans/${groupId}/stats/`)
+      .set(statsObj)
+      .then(() => {
+        dispatch(setClanStat(groupId, statsObj))
+      }).catch((e) => {
+        console.log('Error saving clan stats', e);
+      })
+  }
+}
