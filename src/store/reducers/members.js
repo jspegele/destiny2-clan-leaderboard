@@ -6,7 +6,7 @@ const membersReducer = (state = [], action) => {
       return action.payload.members
     case actionTypes.SET_PVP_STATS:
       return state.map(member => {
-        if (member.destinyUserInfo.membershipId === action.payload.membershipId) {
+        if (member.membershipId === action.payload.membershipId) {
           return {
             ...member,
             pvpStats: action.payload.stats
@@ -17,7 +17,7 @@ const membersReducer = (state = [], action) => {
       })
     case actionTypes.SET_PVE_STATS:
       return state.map(member => {
-        if (member.destinyUserInfo.membershipId === action.payload.membershipId) {
+        if (member.membershipId === action.payload.membershipId) {
           return {
             ...member,
             pveStats: action.payload.stats

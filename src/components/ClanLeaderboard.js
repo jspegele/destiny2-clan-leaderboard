@@ -52,10 +52,28 @@ const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers, setPvpSta
         }
       })
       .then(response => {
-        setMembers(response.data.Response.results)
+        const results = response.data.Response.results
+        const membersArray = []
+        results.forEach(item => {
+          membersArray.push({
+            displayName: item.destinyUserInfo.bungieGlobalDisplayName || item.destinyUserInfo.displayName,
+            displayNameCode: item.destinyUserInfo.bungieGlobalDisplayNameCode || "",
+            membershipId: item.destinyUserInfo.membershipId,
+            membershipType: item.destinyUserInfo.membershipType,
+            bungieNetMembershipId: item.bungieNetUserInfo ? item.bungieNetUserInfo.membershipId : "",
+            bungieNetMembershipType: item.bungieNetUserInfo ? item.bungieNetUserInfo.membershipType : "",
+            iconPath: item.bungieNetUserInfo ? item.bungieNetUserInfo.iconPath : item.destinyUserInfo.iconPath,
+            groupId: item.groupId,
+            isOnline: item.isOnline,
+            joinDate: item.joinDate,
+            lastOnlineStatusChange: item.lastOnlineStatusChange,
+            memberType: 3
+          })
+        })
+        setMembers(membersArray)
       })
       .catch(error => {
-        console.log('Clan members error', error.response)
+        console.log('Clan members errorx', error.response)
         setError('Error retreiving clan roster')
       })
 
@@ -144,10 +162,10 @@ const ClanLeaderboard = ({ clanId, clan, members, setClan, setMembers, setPvpSta
                 <div>K/D</div>
                 <div>Efficiency</div>
               </div>
-              {members.map((member, i) => (
+              {members.map(member => (
                 <MemberRow
-                  key={member.destinyUserInfo.membershipId}
-                  membershipId={member.destinyUserInfo.membershipId}
+                  key={member.membershipId}
+                  membershipId={member.membershipId}
                 />
               ))}
             </div>
