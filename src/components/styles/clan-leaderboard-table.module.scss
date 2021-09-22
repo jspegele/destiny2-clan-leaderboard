@@ -1,0 +1,70 @@
+.table {
+  margin-bottom: 10px;
+}
+
+.row {
+  border-bottom: 1px solid var(--divider);
+  display: grid;
+  grid-template-columns: 250px repeat(8, 1fr);
+  min-height: 3.4rem;
+  width: 100%;
+
+  > div {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    padding: 5px 20px 5px 10px;
+    overflow: hidden;
+
+   &.name {
+      justify-content: flex-start!important;
+    }
+
+    img {
+      border-radius: 4px;
+      margin-right: 12px;
+      width: 24px;
+    }
+  }
+}
+
+.rowHeader { 
+  .name {
+    text-align: left;
+  }
+  
+  .sortable {
+    cursor: pointer;
+    transition: background-color .2s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+      background-image: url('../../images/long-arrow-alt-down-solid.png');
+      background-repeat: no-repeat;
+      background-position: right 5px center;
+      background-size: 6px;
+    }
+  }
+
+  .sortDesc {
+    background-image: url('../../images/long-arrow-alt-down-solid.png');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 6px;
+
+    &:hover {
+      background-image: url('../../images/long-arrow-alt-down-solid.png');
+    }
+  }
+
+  .sortAsc {
+    background-image: url('../../images/long-arrow-alt-up-solid.png');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 6px;
+
+    &:hover {
+      background-image: url('../../images/long-arrow-alt-up-solid.png');
+    }
+  }
+}

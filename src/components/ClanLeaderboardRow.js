@@ -1,28 +1,18 @@
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import axios from 'axios'
+import React from 'react'
 
-import { setPvpStats, setPveStats } from '../store/actions/members'
+import styles from './styles/clan-leaderboard-table.module.scss'
 
-import styles from './styles/member.module.scss'
-
-const MemberRow = ({ membershipId, members, setPvpStats, setPveStats }) => {
-  const member = members.filter(item => item.membershipId === membershipId)[0]
-  const apiRoot = 'https://www.bungie.net/Platform'
-  // const [pvpStats, setPvpStats]  = useState(null)
-  // const [pveStats, setPveStats]  = useState(null)
-
+const ClanLeaderboardRow = ({ member }) => {
   return (
     <>
       {member.pvpStats && (
         member.pvpStats.hasOwnProperty('activitiesEntered') && (
-          <div className={styles.member} key={member.membershipId}>
+          <div className={styles.row} key={member.membershipId}>
             <div className={styles.name}>
               {member.iconPath && <img src={`https://www.bungie.net/${member.iconPath}`} alt="" />}
               {member.displayName}
               {member.displayNameCode && `#${member.displayNameCode}`}
             </div>
-
             <div>{member.pvpStats.activitiesEntered}</div>
             <div>{member.pvpStats.activitiesWon}</div>
             <div>
@@ -39,14 +29,5 @@ const MemberRow = ({ membershipId, members, setPvpStats, setPveStats }) => {
     </>
   )
 }
-
-const mapStateToProps = state => ({
-  members: state.members
-})
-
-const mapDispatchToProps = {
-  setPvpStats,
-  setPveStats
-}
  
-export default connect(mapStateToProps, mapDispatchToProps)(MemberRow)
+export default ClanLeaderboardRow

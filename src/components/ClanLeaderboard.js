@@ -1,183 +1,267 @@
 import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
 import axios from 'axios'
 
-import { startSetClan } from "../store/actions/clan"
-import { startSetMembers, setPvpStats, setPveStats } from "../store/actions/members"
-import { startSetClanStat } from "../store/actions/trackedClans"
-
-import styles from './styles/clan-leaderboard.module.scss'
-
 import ClanDetails from './ClanDetails'
-import MemberRow from './MemberRow'
+import ClanLeaderboardRow from './ClanLeaderboardRow'
+import ClanLeaderboardTable from './ClanLeaderboardTable'
 
-const ClanLeaderboard = ({
-  groupId,
-  clan,
-  members,
-  startSetClan,
-  startSetMembers,
-  setPvpStats,
-  setPveStats,
-  startSetClanStat
-}) => {
+const ClanLeaderboard = ({ groupId }) => {
+  const [clan, setClan] = useState({})
+  const [members, setMembers] = useState([])
+  const [filters, setFilters] = useState({
+    sortBy: "displayName",
+    text: "",
+    hoursPlayed: 0
+  })
   const [error, setError] = useState(null)
-  const [dataLoaded, setDataLoaded] = useState(false)
-  const apiRoot = 'https://www.bungie.net/Platform'
 
+  // Fetch Clan Details
   useEffect(() => {
-    console.log(clan.groupId, groupId, dataLoaded)
-    // Get clan and member info from bungie if not already set in store
-    if (!clan.groupId || clan.groupId !== groupId) {
-      console.log('different clan')
-      startSetClan({ groupId }).then(() => {
-        startSetMembers({ groupId }).then(() => {
-          setDataLoaded(true)
+    function fetchClanDetails() {
+      axios.get(`https://www.bungie.net/Platform/GroupV2/${groupId}/`, {
+        headers: {
+          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+        }
+      })
+      .then(response => {
+        const detail = response.data.Response.detail
+        return setClan({
+          about: detail.about,
+          avatarPath: detail.avatarPath,
+          capabilities: detail.capabilities,
+          clanCallsign: detail.clanInfo.clanCallsign,
+          creationDate: detail.creationDate,
+          groupId: detail.groupId,
+          groupType: detail.groupType,
+          locale: detail.locale,
+          memberCount: detail.memberCount,
+          membershipOption: detail.membershipOption,
+          motto: detail.motto,
+          name: detail.name
         })
       })
-    } else if (clan.groupId) {
-      console.log('same clan')
-      setDataLoaded(true)
+      .catch(error => console.log('Error fetching Group details', error.response))
     }
-  }, [clan.groupId, groupId, startSetClan, startSetMembers])
 
-  const clanTotalStatsDefaultState = {
-    counted: 0,
-    stats: {
-      totalActivities: 0,
-      totalKills: 0,
-      totalAssists: 0,
-      totalDeaths: 0,
-      totalSecondsPlayed: 0
-    }
-  }
-  const [clanTotalStats, setClanTotalStats] = useState(clanTotalStatsDefaultState)
+    fetchClanDetails()
+  }, [groupId])
 
+  // Fetch Clan Members
   useEffect(() => {
-    if (members.length === clan.memberCount) {
-      setClanTotalStats(clanTotalStatsDefaultState)  // Reset clanTotalStats
+    async function fetchClanMemberStats(membershipType, membershipId) {
+      let pvpStats = {}, pveStats = {}
 
-      // get clan member stats
-      members.forEach(member => {
-        const apiEndpoint = `/Destiny2/${member.membershipType}/Account/${member.membershipId}/Stats/`
-        axios.get(`${apiRoot}${apiEndpoint}`, {
-            headers: {
-              'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-            }
-          })
-          .then(response => {
-            // Add this members PvP stats to Store
-            const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
-            if (pvpAllTime) {
-              setPvpStats(member.membershipId, {
-                activitiesEntered: pvpAllTime.activitiesEntered.basic.value,
-                activitiesWon: pvpAllTime.activitiesWon.basic.value,
-                assists: pvpAllTime.assists.basic.value,
-                averageDeathDistance: pvpAllTime.averageDeathDistance.basic.value,
-                averageKillDistance: pvpAllTime.averageKillDistance.basic.value,
-                averageLifespan: pvpAllTime.averageLifespan.basic.value,
-                bestSingleGameKills: pvpAllTime.bestSingleGameKills.basic.value,
-                bestSingleGameScore: pvpAllTime.bestSingleGameScore.basic.value,
-                combatRating: pvpAllTime.combatRating.basic.value,
-                deaths: pvpAllTime.deaths.basic.value,
-                efficiency: pvpAllTime.efficiency.basic.value,
-                fireTeamActivities: pvpAllTime.fireTeamActivities.basic.value,
-                kills: pvpAllTime.kills.basic.value,
-                killsDeathsAssists: pvpAllTime.killsDeathsAssists.basic.value,
-                killsDeathsRatio: pvpAllTime.killsDeathsRatio.basic.value,
-                longestKillDistance: pvpAllTime.longestKillDistance.basic.value,
-                longestKillSpree: pvpAllTime.longestKillSpree.basic.value,
-                opponentsDefeated: pvpAllTime.opponentsDefeated.basic.value,
-                precisionKills: pvpAllTime.precisionKills.basic.value,
-                remainingTimeAfterQuitSeconds: pvpAllTime.remainingTimeAfterQuitSeconds.basic.value,
-                resurrectionsPerformed: pvpAllTime.resurrectionsPerformed.basic.value,
-                resurrectionsReceived: pvpAllTime.resurrectionsReceived.basic.value,
-                score: pvpAllTime.score.basic.value,
-                secondsPlayed: pvpAllTime.secondsPlayed.basic.value,
-                suicides: pvpAllTime.suicides.basic.value,
-                weaponBestType: pvpAllTime.weaponBestType.basic.displayValue,
-                winLossRatio: pvpAllTime.winLossRatio.basic.value
-              })
+      const response = await axios.get(`https://www.bungie.net/Platform/Destiny2/${membershipType}/Account/${membershipId}/Stats/`, {
+        headers: {
+          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+        }
+      })
+      .catch(error => console.log('Error fetching clan member stats', error.response))
 
-              // Add this members stats to clan totals
-              setClanTotalStats(clanTotalStats => ({
-                counted: clanTotalStats.counted + 1,
-                stats: {
-                  totalActivities: clanTotalStats.stats.totalActivities + pvpAllTime.activitiesEntered.basic.value,
-                  totalKills: clanTotalStats.stats.totalKills + pvpAllTime.kills.basic.value,
-                  totalAssists: clanTotalStats.stats.totalAssists + pvpAllTime.assists.basic.value,
-                  totalDeaths: clanTotalStats.stats.totalDeaths + pvpAllTime.deaths.basic.value,
-                  totalSecondsPlayed: clanTotalStats.stats.totalSecondsPlayed + pvpAllTime.secondsPlayed.basic.value
-                }
-              }))
-            } else {
-              setClanTotalStats(clanTotalStats => ({
-                ...clanTotalStats,
-                counted: clanTotalStats.counted + 1
-              }))
-            }
+      const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
+      if (pvpAllTime) {
+        pvpStats = {
+          activitiesEntered: pvpAllTime.activitiesEntered.basic.value,
+          activitiesWon: pvpAllTime.activitiesWon.basic.value,
+          assists: pvpAllTime.assists.basic.value,
+          averageDeathDistance: pvpAllTime.averageDeathDistance.basic.value,
+          averageKillDistance: pvpAllTime.averageKillDistance.basic.value,
+          averageLifespan: pvpAllTime.averageLifespan.basic.value,
+          bestSingleGameKills: pvpAllTime.bestSingleGameKills.basic.value,
+          bestSingleGameScore: pvpAllTime.bestSingleGameScore.basic.value,
+          combatRating: pvpAllTime.combatRating.basic.value,
+          deaths: pvpAllTime.deaths.basic.value,
+          efficiency: pvpAllTime.efficiency.basic.value,
+          fireTeamActivities: pvpAllTime.fireTeamActivities.basic.value,
+          kills: pvpAllTime.kills.basic.value,
+          killsDeathsAssists: pvpAllTime.killsDeathsAssists.basic.value,
+          killsDeathsRatio: pvpAllTime.killsDeathsRatio.basic.value,
+          longestKillDistance: pvpAllTime.longestKillDistance.basic.value,
+          longestKillSpree: pvpAllTime.longestKillSpree.basic.value,
+          opponentsDefeated: pvpAllTime.opponentsDefeated.basic.value,
+          precisionKills: pvpAllTime.precisionKills.basic.value,
+          remainingTimeAfterQuitSeconds: pvpAllTime.remainingTimeAfterQuitSeconds.basic.value,
+          resurrectionsPerformed: pvpAllTime.resurrectionsPerformed.basic.value,
+          resurrectionsReceived: pvpAllTime.resurrectionsReceived.basic.value,
+          score: pvpAllTime.score.basic.value,
+          secondsPlayed: pvpAllTime.secondsPlayed.basic.value,
+          suicides: pvpAllTime.suicides.basic.value,
+          weaponBestType: pvpAllTime.weaponBestType.basic.displayValue,
+          winLossRatio: pvpAllTime.winLossRatio.basic.value
+        }
+      }
 
-            setPveStats(member.membershipId, {
-              ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
-            })
-          })
-          .catch(error => {
-            console.log('Clan members error', error)
-          })
+      // const pveAllTime = response.data.Response.mergedAllCharacters.results.allPvE.allTime
+      // pveStats = {
+      //   ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
+      // }
+
+      return ({
+        pvpStats,
+        pveStats
       })
     }
-  }, [members.length, clan.memberCount, setPvpStats, setPveStats])
 
-  useEffect(() => {
-    startSetClanStat(groupId, clanTotalStats.stats)
-  }, [clanTotalStats.counted, startSetClanStat, groupId, clanTotalStats.stats])
+    function fetchClanMembers() {
+      axios.get(`https://www.bungie.net/Platform/GroupV2/${groupId}/Members`, {
+        headers: {
+          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+        }
+      })
+      .then(response => {
+        const results = response.data.Response.results
+
+        results.forEach(async member => {
+          const memberStats = await fetchClanMemberStats(member.destinyUserInfo.membershipType, member.destinyUserInfo.membershipId)
+          
+          setMembers(members => [
+            ...members,
+            {
+              displayName: member.destinyUserInfo.bungieGlobalDisplayName || (member.bungieNetUserInfo ? member.bungieNetUserInfo.displayName : member.destinyUserInfo.displayName),
+              displayNameCode: member.destinyUserInfo.bungieGlobalDisplayNameCode || "",
+              membershipId: member.destinyUserInfo.membershipId,
+              membershipType: member.destinyUserInfo.membershipType,
+              bungieNetMembershipId: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipId : "",
+              bungieNetMembershipType: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipType : "",
+              iconPath: member.bungieNetUserInfo ? member.bungieNetUserInfo.iconPath : member.destinyUserInfo.iconPath,
+              groupId: member.groupId,
+              isOnline: member.isOnline,
+              joinDate: member.joinDate,
+              lastOnlineStatusChange: member.lastOnlineStatusChange,
+              memberType: 3,
+              pvpStats: memberStats.pvpStats,
+              pveStats: memberStats.pveStats
+            }
+          ])
+        })
+      })
+      .catch(error => console.log('Error fetching clan members', error.response))
+    }
+
+    fetchClanMembers()
+  }, [groupId])
+
+  // CLAN TOTAL STATS
+  // const clanTotalStatsDefaultState = {
+  //   counted: 0,
+  //   stats: {
+  //     totalActivities: 0,
+  //     totalKills: 0,
+  //     totalAssists: 0,
+  //     totalDeaths: 0,
+  //     totalSecondsPlayed: 0
+  //   }
+  // }
+  // const [clanTotalStats, setClanTotalStats] = useState(clanTotalStatsDefaultState)
+
+  // useEffect(() => {
+  //   if (members.length === clan.memberCount) {
+  //     setClanTotalStats(clanTotalStatsDefaultState)  // Reset clanTotalStats
+
+  //     // get clan member stats
+  //     members.forEach(member => {
+  //       const apiEndpoint = `/Destiny2/${member.membershipType}/Account/${member.membershipId}/Stats/`
+  //       axios.get(`${apiRoot}${apiEndpoint}`, {
+  //           headers: {
+  //             'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
+  //           }
+  //         })
+  //         .then(response => {
+  //           // Add this members PvP stats to Store
+  //           const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
+  //           if (pvpAllTime) {
+  //             setPvpStats(member.membershipId, {
+  //               activitiesEntered: pvpAllTime.activitiesEntered.basic.value,
+  //               activitiesWon: pvpAllTime.activitiesWon.basic.value,
+  //               assists: pvpAllTime.assists.basic.value,
+  //               averageDeathDistance: pvpAllTime.averageDeathDistance.basic.value,
+  //               averageKillDistance: pvpAllTime.averageKillDistance.basic.value,
+  //               averageLifespan: pvpAllTime.averageLifespan.basic.value,
+  //               bestSingleGameKills: pvpAllTime.bestSingleGameKills.basic.value,
+  //               bestSingleGameScore: pvpAllTime.bestSingleGameScore.basic.value,
+  //               combatRating: pvpAllTime.combatRating.basic.value,
+  //               deaths: pvpAllTime.deaths.basic.value,
+  //               efficiency: pvpAllTime.efficiency.basic.value,
+  //               fireTeamActivities: pvpAllTime.fireTeamActivities.basic.value,
+  //               kills: pvpAllTime.kills.basic.value,
+  //               killsDeathsAssists: pvpAllTime.killsDeathsAssists.basic.value,
+  //               killsDeathsRatio: pvpAllTime.killsDeathsRatio.basic.value,
+  //               longestKillDistance: pvpAllTime.longestKillDistance.basic.value,
+  //               longestKillSpree: pvpAllTime.longestKillSpree.basic.value,
+  //               opponentsDefeated: pvpAllTime.opponentsDefeated.basic.value,
+  //               precisionKills: pvpAllTime.precisionKills.basic.value,
+  //               remainingTimeAfterQuitSeconds: pvpAllTime.remainingTimeAfterQuitSeconds.basic.value,
+  //               resurrectionsPerformed: pvpAllTime.resurrectionsPerformed.basic.value,
+  //               resurrectionsReceived: pvpAllTime.resurrectionsReceived.basic.value,
+  //               score: pvpAllTime.score.basic.value,
+  //               secondsPlayed: pvpAllTime.secondsPlayed.basic.value,
+  //               suicides: pvpAllTime.suicides.basic.value,
+  //               weaponBestType: pvpAllTime.weaponBestType.basic.displayValue,
+  //               winLossRatio: pvpAllTime.winLossRatio.basic.value
+  //             })
+
+  //             // Add this members stats to clan totals
+  //             setClanTotalStats(clanTotalStats => ({
+  //               counted: clanTotalStats.counted + 1,
+  //               stats: {
+  //                 totalActivities: clanTotalStats.stats.totalActivities + pvpAllTime.activitiesEntered.basic.value,
+  //                 totalKills: clanTotalStats.stats.totalKills + pvpAllTime.kills.basic.value,
+  //                 totalAssists: clanTotalStats.stats.totalAssists + pvpAllTime.assists.basic.value,
+  //                 totalDeaths: clanTotalStats.stats.totalDeaths + pvpAllTime.deaths.basic.value,
+  //                 totalSecondsPlayed: clanTotalStats.stats.totalSecondsPlayed + pvpAllTime.secondsPlayed.basic.value
+  //               }
+  //             }))
+  //           } else {
+  //             setClanTotalStats(clanTotalStats => ({
+  //               ...clanTotalStats,
+  //               counted: clanTotalStats.counted + 1
+  //             }))
+  //           }
+
+  //           setPveStats(member.membershipId, {
+  //             ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
+  //           })
+  //         })
+  //         .catch(error => {
+  //           console.log('Clan members error', error)
+  //         })
+  //     })
+  //   }
+  // }, [members.length, clan.memberCount, setPvpStats, setPveStats])
+
+  // useEffect(() => {
+  //   startSetClanStat(groupId, clanTotalStats.stats)
+  // }, [clanTotalStats.counted, startSetClanStat, groupId, clanTotalStats.stats])
+
+  const selectVisibleMembers = (members, { sortBy, text, hoursPlayed }) => {
+    return members.filter(member => {
+      const textMatch = member.displayName.toLowerCase().includes(text.toLowerCase()) || member.displayNameCode.includes(text.toLowerCase())
+      const hoursPlayedMatch = hoursPlayed ? (member.pvpStats.secondsPlayed / 60 / 60) >= hoursPlayed : true
+      return textMatch && hoursPlayedMatch
+    }).sort((a, b) => {
+      if (sortBy === 'displayName') {
+        return a.displayName.toLowerCase() < b.displayName.toLowerCase() ? -1 : 1
+      } else if (sortBy === 'pvpWinsDesc') {
+        return a.pvpStats.activitiesWon < b.pvpStats.activitiesWon ? 1 : -1;
+      } else if (sortBy === 'pvpWinsAsc') {
+        return a.pvpStats.activitiesWon > b.pvpStats.activitiesWon ? 1 : -1;
+      } else {
+        return a < b
+      }
+    })
+  }
 
   return (
     <div>
-      {error && (
-        <p>{error}</p>
-      )}
-      {dataLoaded && (
-        <>
-          <ClanDetails clan={clan} />
-          {members.length && (
-            <div className={styles.clanStats}>
-              <div className={styles.header}>
-                <div>Player</div>
-                <div>Matches</div>
-                <div>Wins</div>
-                <div>Win %</div>
-                <div>Kills</div>
-                <div>Assists</div>
-                <div>Deaths</div>
-                <div>K/D</div>
-                <div>Efficiency</div>
-              </div>
-              {members.map(member => (
-                <MemberRow
-                  key={member.membershipId}
-                  membershipId={member.membershipId}
-                />
-              ))}
-            </div>
-          )}
-        </>
-      )}
+      {error && <p>{error}</p>}
+      {clan.hasOwnProperty('name') && <ClanDetails clan={clan} />}
+      <ClanLeaderboardTable
+        visibleMembers={selectVisibleMembers(members, filters)}
+        filters={filters}
+        setFilters={setFilters}
+      />
     </div>
   )
 }
 
-const mapStateToProps = state => ({
-  clan: state.clan,
-  members: state.members
-})
-
-const mapDispatchToProps = {
-  startSetClan,
-  startSetMembers,
-  setPvpStats,
-  setPveStats,
-  startSetClanStat
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ClanLeaderboard)
+export default ClanLeaderboard

@@ -37,7 +37,7 @@ export const startSetMembers = ({ groupId }) => {
       })
       return dispatch(setMembers(membersArray))
     })
-    .catch(error => console.log('Clan members errorx', error))
+    .catch(error => console.log('Clan members errorx', error.response))
   }
 }
 

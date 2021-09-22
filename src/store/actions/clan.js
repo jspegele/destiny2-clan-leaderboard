@@ -11,7 +11,7 @@ export const setClan = clan => ({
 
 export const startSetClan = ({ groupId }) => {
   return async (dispatch) => {
-    axios.get(`https://www.bungie.net/Platform//GroupV2/${groupId}/`, {
+    axios.get(`https://www.bungie.net/Platform/GroupV2/${groupId}/`, {
       headers: {
         'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
       }
@@ -33,6 +33,6 @@ export const startSetClan = ({ groupId }) => {
         name: clan.name
       }))
     })
-    .catch(error => console.log('Error featching GroupV2', error))
+    .catch(error => console.log('Error featching GroupV2', error.response))
   }
 }
