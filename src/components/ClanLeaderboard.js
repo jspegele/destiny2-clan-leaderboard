@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import { setClan } from "../store/actions/clan"
-import { setMembers, setPvpStats, setPveStats } from "../store/actions/members"
+import { startSetClan } from "../store/actions/clan"
+import { startSetMembers, setPvpStats, setPveStats } from "../store/actions/members"
 import { startSetClanStat } from "../store/actions/trackedClans"
 
 import styles from './styles/clan-leaderboard.module.scss'
@@ -15,80 +15,31 @@ const ClanLeaderboard = ({
   groupId,
   clan,
   members,
-  setClan,
-  setMembers,
+  startSetClan,
+  startSetMembers,
   setPvpStats,
   setPveStats,
   startSetClanStat
 }) => {
   const [error, setError] = useState(null)
+  const [dataLoaded, setDataLoaded] = useState(false)
   const apiRoot = 'https://www.bungie.net/Platform'
 
   useEffect(() => {
-    // Get clan and member info from bungie if not set in store
-    if (clan.groupId !== groupId) {
-      // clan details lookup
-      axios.get(`${apiRoot}/GroupV2/${groupId}/`, {
-          headers: {
-            'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-          }
+    console.log(clan.groupId, groupId, dataLoaded)
+    // Get clan and member info from bungie if not already set in store
+    if (!clan.groupId || clan.groupId !== groupId) {
+      console.log('different clan')
+      startSetClan({ groupId }).then(() => {
+        startSetMembers({ groupId }).then(() => {
+          setDataLoaded(true)
         })
-        .then(response => {
-          const clanInfo = response.data.Response.detail
-          setClan({
-            about: clanInfo.about,
-            avatarPath: clanInfo.avatarPath,
-            capabilities: clanInfo.capabilities,
-            clanCallsign: clanInfo.clanInfo.clanCallsign,
-            creationDate: clanInfo.creationDate,
-            groupId: clanInfo.groupId,
-            groupType: clanInfo.groupType,
-            locale: clanInfo.locale,
-            memberCount: clanInfo.memberCount,
-            membershipOption: clanInfo.membershipOption,
-            motto: clanInfo.motto,
-            name: clanInfo.name
-          })
-        })
-        .catch(error => {
-          console.log('Clan details error', error.response)
-        })
-
-      // get clan members
-      axios.get(`${apiRoot}/GroupV2/${groupId}/Members`, {
-          headers: {
-            'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-          }
-        })
-        .then(response => {
-          const results = response.data.Response.results
-          console.log(results)
-          const membersArray = []
-          results.forEach(item => {
-            membersArray.push({
-              displayName: item.destinyUserInfo.bungieGlobalDisplayName || (item.bungieNetUserInfo ? item.bungieNetUserInfo.displayName : item.destinyUserInfo.displayName),
-              displayNameCode: item.destinyUserInfo.bungieGlobalDisplayNameCode || "",
-              membershipId: item.destinyUserInfo.membershipId,
-              membershipType: item.destinyUserInfo.membershipType,
-              bungieNetMembershipId: item.bungieNetUserInfo ? item.bungieNetUserInfo.membershipId : "",
-              bungieNetMembershipType: item.bungieNetUserInfo ? item.bungieNetUserInfo.membershipType : "",
-              iconPath: item.bungieNetUserInfo ? item.bungieNetUserInfo.iconPath : item.destinyUserInfo.iconPath,
-              groupId: item.groupId,
-              isOnline: item.isOnline,
-              joinDate: item.joinDate,
-              lastOnlineStatusChange: item.lastOnlineStatusChange,
-              memberType: 3
-            })
-          })
-          setMembers(membersArray)
-        })
-        .catch(error => {
-          console.log('Clan members errorx', error)
-          setError('Error retreiving clan roster')
-        })
-
+      })
+    } else if (clan.groupId) {
+      console.log('same clan')
+      setDataLoaded(true)
     }
-  }, [clan.groupId, groupId, setClan, setMembers])
+  }, [clan.groupId, groupId, startSetClan, startSetMembers])
 
   const clanTotalStatsDefaultState = {
     counted: 0,
@@ -186,7 +137,7 @@ const ClanLeaderboard = ({
       {error && (
         <p>{error}</p>
       )}
-      {(clan.groupId && clan.groupId === groupId) && (
+      {dataLoaded && (
         <>
           <ClanDetails clan={clan} />
           {members.length && (
@@ -222,8 +173,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  setClan,
-  setMembers,
+  startSetClan,
+  startSetMembers,
   setPvpStats,
   setPveStats,
   startSetClanStat
