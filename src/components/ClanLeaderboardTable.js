@@ -5,7 +5,7 @@ import styles from './styles/clan-leaderboard-table.module.scss'
 import ClanLeaderboardRow from './ClanLeaderboardRow'
 import ClanLeaderboardHeader from './ClanLeaderboardHeader'
 
-const ClanLeaderboardTable = ({ visibleMembers, filters, setFilters }) => {
+const ClanLeaderboardTable = ({ visibleMembers, membersWithNoPvpStats, filters, setFilters }) => {
 
   return (
     <div className={styles.wrapper}>
@@ -25,6 +25,16 @@ const ClanLeaderboardTable = ({ visibleMembers, filters, setFilters }) => {
           ))}
         </tbody>
       </table>
+      {membersWithNoPvpStats.length && (
+        <div className={styles.noStats}>
+          No PvP stats found for 
+          <span>
+            {membersWithNoPvpStats.map((member, i) => {
+              return i === 0 ? ` ${member.displayName}` : `, ${member.displayName}`
+            })}
+          </span>
+        </div>
+      )}
     </div>
   )
 }

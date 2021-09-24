@@ -39,6 +39,10 @@
   --success-light: #4caf50;
   --success-main: #2e7d32;
   --success-dark: #1b5e20;
+
+  --titan-red: #603234;
+  --hunter-blue: #234564;
+  --warlock-yellow: #7f6a1f;
 }
 
 html {
