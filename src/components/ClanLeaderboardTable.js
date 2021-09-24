@@ -8,17 +8,23 @@ import ClanLeaderboardHeader from './ClanLeaderboardHeader'
 const ClanLeaderboardTable = ({ visibleMembers, filters, setFilters }) => {
 
   return (
-    <div className={styles.table}>
-      <ClanLeaderboardHeader
-        filters={filters}
-        setFilters={setFilters}
-      />
-      {visibleMembers.map(member => (
-        <ClanLeaderboardRow
-          key={member.membershipId}
-          member={member}
-        />
-      ))}
+    <div className={styles.wrapper}>
+      <table className={styles.table}>
+        <thead>
+          <ClanLeaderboardHeader
+            filters={filters}
+            setFilters={setFilters}
+          />
+        </thead>
+        <tbody>
+          {visibleMembers.map(member => (
+            <ClanLeaderboardRow
+              key={member.membershipId}
+              member={member}
+            />
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

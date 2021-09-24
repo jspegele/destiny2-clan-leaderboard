@@ -13,62 +13,62 @@ const ClanLeaderboardHeader = ({ filters, setFilters }) => {
   }
 
   return (
-    <div className={`${styles.row} ${styles.rowHeader}`}>
-      <div
-        className={`${styles.name} ${styles.sortable} ${filters.sortBy === "nameDesc" ? styles.sortDesc : filters.sortBy === "nameAsc" ? styles.sortAsc : ""}`}
+    <tr className={styles.rowHeader}>
+      <th
+        className={`${styles.name} ${styles.sortable} ${filters.sortBy === "nameDesc" ? styles.sorthesc : filters.sortBy === "nameAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("nameAsc", "nameDesc")}
       >
         Player
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpMatchesDesc" ? styles.sortDesc : filters.sortBy === "pvpMatchesAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpMatchesDesc" ? styles.sorthesc : filters.sortBy === "pvpMatchesAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpMatchesDesc", "pvpMatchesAsc")}
       >
         Matches
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpWinsDesc" ? styles.sortDesc : filters.sortBy === "pvpWinsAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpWinsDesc" ? styles.sorthesc : filters.sortBy === "pvpWinsAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpWinsDesc", "pvpWinsAsc")}
       >
         Wins
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpWinRatioDesc" ? styles.sortDesc : filters.sortBy === "pvpWinRatioAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpWinRatioDesc" ? styles.sorthesc : filters.sortBy === "pvpWinRatioAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpWinRatioDesc", "pvpWinRatioAsc")}
       >
         Win %
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpKillsDesc" ? styles.sortDesc : filters.sortBy === "pvpKillsAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpKillsDesc" ? styles.sorthesc : filters.sortBy === "pvpKillsAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpKillsDesc", "pvpKillsAsc")}
       >
         Kills
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpAssistsDesc" ? styles.sortDesc : filters.sortBy === "pvpAssistsAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpAssistsDesc" ? styles.sorthesc : filters.sortBy === "pvpAssistsAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpAssistsDesc", "pvpAssistsAsc")}
       >
         Assists
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpDeathsDesc" ? styles.sortDesc : filters.sortBy === "pvpDeathsAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpDeathsDesc" ? styles.sorthesc : filters.sortBy === "pvpDeathsAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpDeathsDesc", "pvpDeathsAsc")}
       >
         Deaths
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpKdrDesc" ? styles.sortDesc : filters.sortBy === "pvpKdrAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpKdrDesc" ? styles.sorthesc : filters.sortBy === "pvpKdrAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpKdrDesc", "pvpKdrAsc")}
       >
         K/D
-      </div>
-      <div
-        className={`${styles.sortable} ${filters.sortBy === "pvpEfficiencyDesc" ? styles.sortDesc : filters.sortBy === "pvpEfficiencyAsc" ? styles.sortAsc : ""}`}
+      </th>
+      <th
+        className={`${styles.sortable} ${filters.sortBy === "pvpEfficiencyDesc" ? styles.sorthesc : filters.sortBy === "pvpEfficiencyAsc" ? styles.sortAsc : ""}`}
         onClick={() => handleSort("pvpEfficiencyDesc", "pvpEfficiencyAsc")}
       >
         Efficiency
-      </div>
-    </div>
+      </th>
+    </tr>
   )
 }
  
