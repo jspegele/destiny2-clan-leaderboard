@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { HiOutlineSearch } from 'react-icons/hi'
 
 import database from '../firebase/firebase'
 import { history } from '../routers/AppRouter'
@@ -44,13 +45,24 @@ const ClanSearch = () => {
       <h2>Clan Lookup</h2>
       <form className={styles.form} onSubmit={handleClanLookup}>
         <label htmlFor="clan-search" className="visuallyhidden">Search Clans:</label>{' '}
-        <input
-          type="text"
-          placeholder="Exact clan name"
-          value={clanName}
-          onChange={e => setClanName(e.target.value)}
-        />
-        <button type="submit">Go</button>
+        <div className={styles.inputContainer}>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Exact clan name"
+            value={clanName}
+            onChange={e => setClanName(e.target.value)}
+          />
+          <div className={styles.icon}>
+            <HiOutlineSearch />
+          </div>
+        </div>
+        <button
+        className={styles.button}
+          type="submit"
+        >
+          Go
+        </button>
       </form>
       {error && (
         <p>{error}</p>

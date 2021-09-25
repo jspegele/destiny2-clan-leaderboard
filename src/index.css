@@ -11,8 +11,16 @@
   --action-disabled: rgba(255, 255, 255, 0.3);
   --action-disabledBackground: rgba(255, 255, 255, 0.12);
 
-  --background-default: #121212;
-  --background-paper: #121212;
+  --surface00dp: #121212;
+  --surface01dp: #1d1d1d;
+  --surface02dp: #212121;
+  --surface03dp: #242424;
+  --surface04dp: #272727;
+  --surface06dp: #2c2c2c;
+  --surface08dp: #2d2d2d;
+  --surface12dp: #323232;
+  --surface16dp: #353535;
+  --surface24dp: #373737;
 
   --divider: rgba(255, 255, 255, 0.12);
 
@@ -62,7 +70,7 @@ body, h1, h2, h3, h4, h5, h6, p, ol, ul {
 }
 
 body {
-  background: var(--background-default);
+  background: var(--surface00dp);
   color: var(--text-primary);
   font-family: 'Roboto', Helvetica, sans-serif;
   font-size: 1.6rem;
