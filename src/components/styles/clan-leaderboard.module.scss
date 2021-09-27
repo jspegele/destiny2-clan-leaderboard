@@ -1,7 +1,21 @@
-.loading {
-  align-items: center;
-  display: flex;
-  height: 50vh;
-  justify-content: center;
+.overlay {
+  position: fixed;
   width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.overlayText {
+  position: absolute;
+  top: 528px;
+  left: 50%;
+  font-size: 16px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
 }

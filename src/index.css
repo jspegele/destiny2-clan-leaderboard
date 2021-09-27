@@ -48,8 +48,12 @@
   --success-main: #2e7d32;
   --success-dark: #1b5e20;
 
-  --rich-black-fogra-39: #0c0c0fff;
-  --rich-black-fogra-39-2: #101014ff;
+  --rich-black-fogra-39: #0c0c0f;
+  --rich-black-fogra-39-2: #101014;
+  --rich-black-fogra-39-3: #0e0e15;
+  --rich-black-fogra-39-4: #1a1a27;
+  --rich-black-fogra-39-5: #1c1c2e;
+  
   --white: #ffffffff;
   --independence: #475977ff;
   --magenta-haze: #963d72ff;
