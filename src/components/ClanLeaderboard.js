@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import { setClan } from '../store/actions/clan'
+import { startSetClan } from '../store/actions/clan'
 import { setMembers } from '../store/actions/members'
 import selectVisibleMembers from '../utilities/selectVisibleMembers'
 
@@ -12,7 +12,7 @@ import ClanLeaderboardSkeleton from './ClanLeaderboardSkeleton'
 
 import styles from './styles/clan-leaderboard.module.scss'
 
-const ClanLeaderboard = ({ groupId, clan, members, setClan, setMembers }) => {
+const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers }) => {
   const [fetchNewData, setFetchNewData] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -34,37 +34,11 @@ const ClanLeaderboard = ({ groupId, clan, members, setClan, setMembers }) => {
 
   // Fetch Clan Details
   useEffect(() => {
-    function fetchClanDetails() {
-      axios.get(`https://www.bungie.net/Platform/GroupV2/${groupId}/`, {
-        headers: {
-          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-        }
-      })
-      .then(response => {
-        const detail = response.data.Response.detail
-        setClan({
-          about: detail.about,
-          avatarPath: detail.avatarPath,
-          capabilities: detail.capabilities,
-          clanCallsign: detail.clanInfo.clanCallsign,
-          creationDate: detail.creationDate,
-          groupId: detail.groupId,
-          groupType: detail.groupType,
-          locale: detail.locale,
-          memberCount: detail.memberCount,
-          membershipOption: detail.membershipOption,
-          motto: detail.motto,
-          name: detail.name
-        })
-      })
-      .catch(error => console.log('Error fetching Group details', error.response))
-    }
-
     if (fetchNewData) {
-      fetchClanDetails()
+      startSetClan(groupId)
     }
 
-  }, [groupId, setClan, fetchNewData])
+  }, [fetchNewData, startSetClan, groupId])
 
   // Fetch Clan Members
   useEffect(() => {
@@ -326,7 +300,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  setClan,
+  startSetClan,
   setMembers
 }
 
