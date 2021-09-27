@@ -5,8 +5,8 @@ import styles from './styles/footer.module.scss'
 
 const Footer = () => {
   return (
-    <Container>
-      <footer className={styles.footer}>
+    <footer className={styles.footer}>
+      <Container>
         <div className={styles.createdBy}>
           Created by <a href="https://justinspegele.com">Justin Spegele</a>
         </div>
@@ -15,8 +15,8 @@ const Footer = () => {
           respective owners. Bungie has not endorsed and is not responsible for the 
           content of this site.
         </div>
-      </footer>
-    </Container>
+      </Container>
+    </footer>
   )
 }
  
