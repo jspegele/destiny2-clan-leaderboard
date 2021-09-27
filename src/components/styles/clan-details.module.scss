@@ -1,25 +1,43 @@
 .details {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 h2.name {
-  font-size: 3.2rem;
+  font-size: 2rem;
   padding-bottom: 10px;
 }
 
 h3.motto {
   color: var(--text-secondary);
-  font-size: 2.8rem;
+  font-size: 1.4rem;
   font-style: italic;
   font-weight: 300;
   padding-bottom: 20px;
 }
 
 p {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   padding-bottom: 10px;
 }
 
 .label {
   font-weight: 500;
+}
+
+@media screen and (min-width: 769px) {
+  .details {
+    margin-bottom: 40px;
+  }
+
+  h2.name {
+    font-size: 3.2rem;
+  }
+  
+  h3.motto {
+    font-size: 1.6rem;
+  }
+  
+  p {
+    font-size: 1.6rem;
+  }
 }
