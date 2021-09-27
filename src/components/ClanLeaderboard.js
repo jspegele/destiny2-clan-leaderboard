@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
 import axios from 'axios'
 
+import { setClan } from '../store/actions/clan'
+import { setMembers } from '../store/actions/members'
 import selectVisibleMembers from '../utilities/selectVisibleMembers'
 
 import ClanDetails from './ClanDetails'
 import ClanLeaderboardTable from './ClanLeaderboardTable'
-
-import styles from './styles/clan-leaderboard.module.scss'
 import ClanLeaderboardSkeleton from './ClanLeaderboardSkeleton'
 
-const ClanLeaderboard = ({ groupId }) => {
-  const [clan, setClan] = useState({})
-  const [members, setMembers] = useState([])
+import styles from './styles/clan-leaderboard.module.scss'
+
+const ClanLeaderboard = ({ groupId, clan, members, setClan, setMembers }) => {
+  const [fetchNewData, setFetchNewData] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [filters, setFilters] = useState({
     sortBy: "nameAsc",
     text: "",
     hoursPlayed: 0
   })
-  const [error, setError] = useState(null)
+
+  // if clan data is not already in store, fetch new clan data
+  useEffect(() => {
+    if (groupId !== clan.groupId) {
+      setMembers([])
+      setFetchNewData(true)
+    } else {
+      setLoading(false)
+    }
+  }, [])
 
   // Fetch Clan Details
   useEffect(() => {
@@ -29,7 +42,7 @@ const ClanLeaderboard = ({ groupId }) => {
       })
       .then(response => {
         const detail = response.data.Response.detail
-        return setClan({
+        setClan({
           about: detail.about,
           avatarPath: detail.avatarPath,
           capabilities: detail.capabilities,
@@ -47,8 +60,11 @@ const ClanLeaderboard = ({ groupId }) => {
       .catch(error => console.log('Error fetching Group details', error.response))
     }
 
-    fetchClanDetails()
-  }, [groupId])
+    if (fetchNewData) {
+      fetchClanDetails()
+    }
+
+  }, [groupId, setClan, fetchNewData])
 
   // Fetch Clan Members
   useEffect(() => {
@@ -143,9 +159,9 @@ const ClanLeaderboard = ({ groupId }) => {
         Promise.all(results.map(member =>
           createClanMember(member)
         ))
-        .then(data => {
-          // do something with the data
-          setMembers(data)
+        .then(membersArray => {
+          setMembers(membersArray)
+          setLoading(false)
         })
         
         // const membersArray = []
@@ -175,10 +191,11 @@ const ClanLeaderboard = ({ groupId }) => {
       .catch(error => console.log('Error fetching clan members', error.response))
     }
 
-    fetchClanMembers()
+    if (fetchNewData) {
+      fetchClanMembers()
+    }
 
-    return () => { setMembers([]) }
-  }, [groupId])
+  }, [groupId, setMembers, fetchNewData])
 
   // CLAN TOTAL STATS
   // const clanTotalStatsDefaultState = {
@@ -279,7 +296,7 @@ const ClanLeaderboard = ({ groupId }) => {
   return (
     <div>
       {error && <p>{error}</p>}
-      {members.length ? (
+      {(!loading && members.length) ? (
         <>
           {clan.hasOwnProperty('name') && <ClanDetails clan={clan} />}
           <ClanLeaderboardTable
@@ -303,4 +320,14 @@ const ClanLeaderboard = ({ groupId }) => {
   )
 }
 
-export default ClanLeaderboard
+const mapStateToProps = state => ({
+  clan: state.clan,
+  members: state.members
+})
+
+const mapDispatchToProps = {
+  setClan,
+  setMembers
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClanLeaderboard)
