@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 
 import { startSetClan } from '../store/actions/clan'
-import { setMembers } from '../store/actions/members'
+import { setMembers, startSetMembers } from '../store/actions/members'
 import selectVisibleMembers from '../utilities/selectVisibleMembers'
 
 import ClanDetails from './ClanDetails'
@@ -12,7 +12,7 @@ import ClanLeaderboardSkeleton from './ClanLeaderboardSkeleton'
 
 import styles from './styles/clan-leaderboard.module.scss'
 
-const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers }) => {
+const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers, startSetMembers }) => {
   const [fetchNewData, setFetchNewData] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -37,139 +37,14 @@ const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers }) =
     if (fetchNewData) {
       startSetClan(groupId)
     }
-
   }, [fetchNewData, startSetClan, groupId])
 
   // Fetch Clan Members
   useEffect(() => {
-    async function fetchClanMemberStats(membershipType, membershipId) {
-      let pvpStats = {}, pveStats = {}
-
-      const fetchUrl = `https://www.bungie.net/Platform/Destiny2/${membershipType}/Account/${membershipId}/Stats/`
-      const response = await axios.get(fetchUrl, {
-        headers: {
-          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-        }
-      })
-      .catch(error => console.log('Error fetching clan member stats', membershipId, error.response))
-
-      if (response && response.status === 200) {
-        const pvpAllTime = response.data.Response.mergedAllCharacters.results.allPvP.allTime
-        if (pvpAllTime) {
-          pvpStats = {
-            activitiesEntered: pvpAllTime.activitiesEntered.basic.value,
-            activitiesWon: pvpAllTime.activitiesWon.basic.value,
-            assists: pvpAllTime.assists.basic.value,
-            averageDeathDistance: pvpAllTime.averageDeathDistance.basic.value,
-            averageKillDistance: pvpAllTime.averageKillDistance.basic.value,
-            averageLifespan: pvpAllTime.averageLifespan.basic.value,
-            bestSingleGameKills: pvpAllTime.bestSingleGameKills.basic.value,
-            bestSingleGameScore: pvpAllTime.bestSingleGameScore.basic.value,
-            combatRating: pvpAllTime.combatRating.basic.value,
-            deaths: pvpAllTime.deaths.basic.value,
-            efficiency: pvpAllTime.efficiency.basic.value,
-            fireTeamActivities: pvpAllTime.fireTeamActivities.basic.value,
-            kills: pvpAllTime.kills.basic.value,
-            killsDeathsAssists: pvpAllTime.killsDeathsAssists.basic.value,
-            killsDeathsRatio: pvpAllTime.killsDeathsRatio.basic.value,
-            longestKillDistance: pvpAllTime.longestKillDistance.basic.value,
-            longestKillSpree: pvpAllTime.longestKillSpree.basic.value,
-            opponentsDefeated: pvpAllTime.opponentsDefeated.basic.value,
-            precisionKills: pvpAllTime.precisionKills.basic.value,
-            remainingTimeAfterQuitSeconds: pvpAllTime.remainingTimeAfterQuitSeconds.basic.value,
-            resurrectionsPerformed: pvpAllTime.resurrectionsPerformed.basic.value,
-            resurrectionsReceived: pvpAllTime.resurrectionsReceived.basic.value,
-            score: pvpAllTime.score.basic.value,
-            secondsPlayed: pvpAllTime.secondsPlayed.basic.value,
-            suicides: pvpAllTime.suicides.basic.value,
-            weaponBestType: pvpAllTime.weaponBestType.basic.displayValue,
-            winLossRatio: pvpAllTime.winLossRatio.basic.value
-          }
-        }
-      }
-
-      // const pveAllTime = response.data.Response.mergedAllCharacters.results.allPvE.allTime
-      // pveStats = {
-      //   ...response.data.Response.mergedAllCharacters.results.allPvE.allTime
-      // }
-
-      return ({
-        pvpStats,
-        pveStats
-      })
-
-    }
-
-    async function createClanMember(member) {
-      const memberStats = await fetchClanMemberStats(member.destinyUserInfo.membershipType, member.destinyUserInfo.membershipId)
-
-      return ({
-        displayName: member.destinyUserInfo.bungieGlobalDisplayName || (member.bungieNetUserInfo ? member.bungieNetUserInfo.displayName : member.destinyUserInfo.displayName),
-        displayNameCode: member.destinyUserInfo.bungieGlobalDisplayNameCode || "",
-        membershipId: member.destinyUserInfo.membershipId,
-        membershipType: member.destinyUserInfo.membershipType,
-        bungieNetMembershipId: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipId : "",
-        bungieNetMembershipType: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipType : "",
-        iconPath: member.bungieNetUserInfo ? member.bungieNetUserInfo.iconPath : member.destinyUserInfo.iconPath,
-        groupId: member.groupId,
-        isOnline: member.isOnline,
-        joinDate: member.joinDate,
-        lastOnlineStatusChange: member.lastOnlineStatusChange,
-        memberType: 3,
-        pvpStats: memberStats.pvpStats,
-        pveStats: memberStats.pveStats
-      })
-    }
-
-    function fetchClanMembers() {
-      axios.get(`https://www.bungie.net/Platform/GroupV2/${groupId}/Members`, {
-        headers: {
-          'X-API-Key': process.env.REACT_APP_BUNGIE_API_KEY
-        }
-      })
-      .then(response => {
-        const results = response.data.Response.results
-        
-        Promise.all(results.map(member =>
-          createClanMember(member)
-        ))
-        .then(membersArray => {
-          setMembers(membersArray)
-          setLoading(false)
-        })
-        
-        // const membersArray = []
-        // results.forEach(async member => {
-        //   const memberStats = await fetchClanMemberStats(member.destinyUserInfo.membershipType, member.destinyUserInfo.membershipId)
-          
-        //   membersArray.push({
-        //     displayName: member.destinyUserInfo.bungieGlobalDisplayName || (member.bungieNetUserInfo ? member.bungieNetUserInfo.displayName : member.destinyUserInfo.displayName),
-        //     displayNameCode: member.destinyUserInfo.bungieGlobalDisplayNameCode || "",
-        //     membershipId: member.destinyUserInfo.membershipId,
-        //     membershipType: member.destinyUserInfo.membershipType,
-        //     bungieNetMembershipId: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipId : "",
-        //     bungieNetMembershipType: member.bungieNetUserInfo ? member.bungieNetUserInfo.membershipType : "",
-        //     iconPath: member.bungieNetUserInfo ? member.bungieNetUserInfo.iconPath : member.destinyUserInfo.iconPath,
-        //     groupId: member.groupId,
-        //     isOnline: member.isOnline,
-        //     joinDate: member.joinDate,
-        //     lastOnlineStatusChange: member.lastOnlineStatusChange,
-        //     memberType: 3,
-        //     pvpStats: memberStats.pvpStats,
-        //     pveStats: memberStats.pveStats
-        //   })
-        // })
-        // setMembers(membersArray)
-
-      })
-      .catch(error => console.log('Error fetching clan members', error.response))
-    }
-
     if (fetchNewData) {
-      fetchClanMembers()
+      startSetMembers(groupId).then(() => setLoading(false))
     }
-
-  }, [groupId, setMembers, fetchNewData])
+  }, [fetchNewData, startSetMembers, groupId])
 
   // CLAN TOTAL STATS
   // const clanTotalStatsDefaultState = {
@@ -301,7 +176,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   startSetClan,
-  setMembers
+  setMembers,
+  startSetMembers
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ClanLeaderboard)
