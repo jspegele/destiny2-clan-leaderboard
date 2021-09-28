@@ -63,6 +63,7 @@
 html {
   box-sizing: border-box;
   font-size: 62.5%;
+  letter-spacing: .05rem;
   scroll-behavior: smooth;
 }
 

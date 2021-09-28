@@ -11,6 +11,7 @@ import ClanLeaderboardTable from './ClanLeaderboardTable'
 import ClanLeaderboardSkeleton from './ClanLeaderboardSkeleton'
 
 import styles from './styles/clan-leaderboard.module.scss'
+import ClanLeaders from './ClanLeaders'
 
 const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers, startSetMembers }) => {
   const [fetchNewData, setFetchNewData] = useState(false)
@@ -147,7 +148,8 @@ const ClanLeaderboard = ({ groupId, clan, members, startSetClan, setMembers, sta
       {error && <p>{error}</p>}
       {(!loading && members.length) ? (
         <>
-          {clan.hasOwnProperty('name') && <ClanDetails clan={clan} />}
+          <ClanDetails clan={clan} />
+          <ClanLeaders members={members} />
           <ClanLeaderboardTable
             visibleMembers={selectVisibleMembers(members, filters)}
             membersWithNoPvpStats={selectMembersWithNoPvpStats(members)}

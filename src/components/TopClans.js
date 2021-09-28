@@ -9,7 +9,7 @@ const TopClans = ({ trackedClans }) => {
     <div className={styles.wrapper}>
       <div className={styles.topClans}>
         <h3>Tracked Clans</h3>
-        {trackedClans.length && (
+        {trackedClans.length ? (
           <ul>
             {trackedClans.map(clan => (
               <li key={clan.groupId}>
@@ -19,6 +19,8 @@ const TopClans = ({ trackedClans }) => {
               </li>
             ))}
           </ul>
+        ) : (
+          <></>
         )}
       </div>
     </div>

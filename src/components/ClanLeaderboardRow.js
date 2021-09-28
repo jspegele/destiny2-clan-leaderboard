@@ -16,7 +16,7 @@ const ClanLeaderboardRow = ({ member }) => {
             <td>{member.pvpStats.activitiesEntered}</td>
             <td>{member.pvpStats.activitiesWon}</td>
             <td>
-              {Math.round(parseInt(member.pvpStats.activitiesWon) / parseInt(member.pvpStats.activitiesEntered) * 100) / 100}
+              {(Math.round(parseInt(member.pvpStats.activitiesWon) / parseInt(member.pvpStats.activitiesEntered) * 100) / 100) * 100}%
             </td>
             <td>{member.pvpStats.kills}</td>
             <td>{member.pvpStats.assists}</td>
